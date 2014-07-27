@@ -6,3 +6,4 @@ boto==2.31.1
 django-storages==1.1.8
 django-cors-headers==0.12
 bcrypt==1.0.2
+python-postmark==0.4.3
