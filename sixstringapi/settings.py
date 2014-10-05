@@ -1,6 +1,8 @@
 import os
 from django.core.exceptions import ImproperlyConfigured
 
+import dj_database_url
+
 """
 Django settings for sixstringapi project.
 
@@ -25,7 +27,6 @@ if SECRET_KEY is None:
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get('DEBUG', False))
-
 TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = ['*',]
@@ -50,6 +51,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'gunicorn',
+    'corsheaders',
+    'rest_framework',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -81,7 +85,18 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.CryptPasswordHasher',
 )
 
-
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
@@ -118,10 +133,16 @@ STATICFILES_DIRS = (
 
 EMAIL_BACKEND_TYPE = os.environ.get('EMAIL_BACKEND', 'CONSOLE')
 if EMAIL_BACKEND_TYPE == 'POSTMARK':
-    POSTMARK_API_KEY = os.environ.get('POSTMARK_API_KEY', False)
-    POSTMARK_SENDER = os.environ.get('POSTMARK_SENDER', False)
+    POSTMARK_API_KEY = os.environ.get('POSTMARK_API_KEY', None)
+    POSTMARK_SENDER = os.environ.get('POSTMARK_SENDER', None)
     POSTMARK_TRACK_OPENS = True
     POSTMARK_TEST_MODE = False
+
+    if POSTMARK_API_KEY is None:
+        raise ImproperlyConfigured('Please set the POSTMARK_API_KEY evironment variable')
+    if POSTMARK_SENDER is None:
+        raise ImproperlyConfigured('Please set the POSTMARK_SENDER evironment variable')
+
     EMAIL_BACKEND = 'postmark.django_backend.EmailBackend'
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

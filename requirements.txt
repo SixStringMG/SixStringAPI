@@ -1,9 +1,12 @@
-https://www.djangoproject.com/download/1.7c2/tarball/
+Django==1.7
+MySQL-python==1.2.5
 dj-database-url==0.3.0
 dj-static==0.0.6
-gunicorn==19.1.0
-boto==2.31.1
+gunicorn==19.1.1
+boto==2.32.1
 django-storages==1.1.8
-django-cors-headers==0.12
+django-cors-headers==0.13
 bcrypt==1.0.2
-python-postmark==0.4.3
+python-postmark==0.4.4
+pytz==2014.7
+djangorestframework==2.4.3
